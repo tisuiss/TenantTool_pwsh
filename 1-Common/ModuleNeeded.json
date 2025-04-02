@@ -1,0 +1,25 @@
+{
+    "modules": [
+        {
+            "name": "Microsoft.Graph"
+        },
+        {
+            "name": "Microsoft.Graph.Beta"
+        },
+        {
+            "name": "MicrosoftTeams"
+        },
+        {
+            "name": "ExchangeOnlineManagement"
+        },
+        {
+            "name": "Microsoft.Online.SharePoint.PowerShell"
+        },
+        {
+            "name": "ImportExcel"
+        },
+        {
+            "name": "PsWriteHtml"
+        }
+    ]
+}
