@@ -13,6 +13,12 @@
   Creation Date:  <10.02.25>
 #>
 
+#----------------------------------------------------------[Param]--------------------------------------------------------------
+#region Param
+    [CmdletBinding()]
+    param (
+        [Mandatory] $DataFilePath
+    )
 #----------------------------------------------------------[Environment]--------------------------------------------------------
 #Change UI Size
 $host.UI.RawUI.BufferSize = New-Object Management.Automation.Host.Size(500, 3000)
@@ -20,7 +26,7 @@ $host.UI.RawUI.BufferSize = New-Object Management.Automation.Host.Size(500, 3000
 #----------------------------------------------------------[Variables]----------------------------------------------------------
 #region variables
     #xlsx File Path
-    $XlsPath = "C:\temp\Conditional Access Policy Documentation - Strato.xlsx"
+    $XlsPath = $DataFilePath
 
     #Initialize CA Settings table
     $CAsSettings = @()
@@ -872,6 +878,11 @@ $host.UI.RawUI.BufferSize = New-Object Management.Automation.Host.Size(500, 3000
         start-sleep -seconds 2
     }
     #endregion Import CA
+
+    #region Result
+    $ResultsCA = Get-MgIdentityConditionalAccessPolicy -All | Select-Object DisplayName,State,CreatedDateTime,ModifiedDateTime | Sort-Object ModifiedDateTime,CreatedDateTime -Descending
+    $ResultsCA | Export-Excel -Path 'C:\TenantTool\Check\CAManagementResult.xlsx' -AutoSize -WorksheetName "CAResult" -TableName "CAResult" -BoldTopRow -FreezeTopRow -AutoFilter -AutoSize -ShowFilterButton -Title "Conditional Access Result" -TitleBold -TitleSize 16 -TitleColor DarkBlue -HeaderColor DarkBlue -HeaderSize 12 -HeaderBold -HeaderTextColor White -TableStyle Medium9
+    #endregion Result
 
 
     #region Disconnect 
