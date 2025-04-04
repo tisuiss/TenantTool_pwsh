@@ -49,7 +49,6 @@ if ($Debug -eq "yes") {
     start-transcript -path $DebutPathFile
     Write-Debug "Debug mode activated"
     Write-host "DataPath : $DataFilePath"
-    $ErrorActionPreference = "Stop"
 }
 
 #----------------------------------------------------------[Connexions]---------------------------------------------------------
