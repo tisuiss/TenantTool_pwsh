@@ -17,7 +17,8 @@
 #region Param
     [CmdletBinding()]
     param (
-        [Mandatory] $DataFilePath
+        [Parameter(Mandatory=$true)]
+        [string] $DataFilePath
     )
 #----------------------------------------------------------[Environment]--------------------------------------------------------
 #Change UI Size
