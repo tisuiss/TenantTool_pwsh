@@ -15,11 +15,11 @@
 
 #----------------------------------------------------------[Param]--------------------------------------------------------------
 #region Param
-    [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true)]
         [string] $DataFilePath
     )
+
 #----------------------------------------------------------[Environment]--------------------------------------------------------
 #Change UI Size
 $host.UI.RawUI.BufferSize = New-Object Management.Automation.Host.Size(500, 3000)
