@@ -150,9 +150,15 @@ Foreach ($DynamicGroup in $DynamicGroups) {
                          -MembershipRuleProcessingState "On"
         
         # Set the owner, assuming the owner is an email address that needs to be converted to an Object ID
-        $ownerId = (Get-MgUser -UserId $DynamicGroup.Owner).Id
-        New-MgGroupOwner -GroupId $A.Id -DirectoryObjectId $ownerId
-
+        if ($DynamicGroup.Owner -eq "") {
+            $BreakGlassAcc = Get-MgBetaUser -All | Where-Object {$_.JobTitle -eq "Admin" -and $_.CompanyName -eq "TenantAdmin" -and $_.Department -eq "BreakGlass"}
+            if ($BreakGlassAcc.count -gt "0") {
+                New-MgGroupOwner -GroupId $A.Id -DirectoryObjectId $BreakGlassAcc.Id
+            }
+        } else {
+            $ownerId = (Get-MgUser -UserId $DynamicGroup.Owner).Id
+            New-MgGroupOwner -GroupId $A.Id -DirectoryObjectId $ownerId
+        }
         # Optionally, you can log the result or add it to $ActionInfo here if needed
     }
 }
