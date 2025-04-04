@@ -22,6 +22,37 @@
 #----------------------------------------------------------[Environment]--------------------------------------------------------
 #Change UI Size
 $host.UI.RawUI.BufferSize = New-Object Management.Automation.Host.Size(500, 3000)
+#Clear powershell window
+clear-host
+
+#----------------------------------------------------------[Debug]--------------------------------------------------------------
+$Debug = "Yes"
+if ($Debug -eq "Yes") {
+    start-transcript -path $DebutPathFile
+    }
+
+#----------------------------------------------------------[Module]-------------------------------------------------------------
+$ModuleNeeded = "Microsoft.Graph","Microsoft.Graph.Beta","ImportExcel"
+$DebutPathFile = "C:\TenantTool\Log\$(Get-Date -Format 'yyyy-MM-dd_HH-mm-ss')_AdminUsrCreation.log"
+Write-host "Checking if all needed modules are installed"
+$MissModule = "0"
+
+
+
+foreach ($Module in $ModuleNeeded) {
+    $Check = Get-Module -Name $Module -ListAvailable
+    if ($Check.count -gt "0") {
+        Write-host "Module $Module is installed" -ForegroundColor Green
+    } else {
+        $MissModule = +1
+        Write-host "Module $Module is not installed" -ForegroundColor Red
+    }
+}
+
+if ($MissModule -gt "0") {
+    Read-Host -Prompt "Please install the module $Module and execute again the command."
+    exit
+}
 
 #----------------------------------------------------------[Variables]----------------------------------------------------------
 #region variables
@@ -157,13 +188,7 @@ $host.UI.RawUI.BufferSize = New-Object Management.Automation.Host.Size(500, 3000
 
 #endregion variables
 #----------------------------------------------------------[Functions]----------------------------------------------------------
-#region fonctions
-
-#endregion fonctions
-#----------------------------------------------------------[Module]-------------------------------------------------------------
-#----------------------------------------------------------[Connexions]---------------------------------------------------------
-#region Connexion
-    #Connect on Graph
+Function Connect-GrpahAPI {
     try {
         $IsGraphSign = Get-MgContext
         if ($IsGraphSign.count -gt "0") {
@@ -179,6 +204,31 @@ $host.UI.RawUI.BufferSize = New-Object Management.Automation.Host.Size(500, 3000
     } Catch {
         Write-Host "Error: $_"
     }
+}
+
+#----------------------------------------------------------[Connexions]---------------------------------------------------------
+#region Connexion
+    #Connect on Graph
+    $YesAnswers = @("Yes","Y","O", "Oui")
+    $response = ""
+    
+    do {
+        Connect-GrpahAPI
+        $OrgName = (Get-MgOrganization).DisplayName
+        $UserSignIn = (Get-MgContext).Account
+        Write-Host "`n"
+        Write-Host "`n------------------------------`n" -ForegroundColor Cyan
+        Write-Host -NoNewline "Connected on : " -ForegroundColor Magenta
+        Write-Host "$OrgName" -ForegroundColor White
+        Write-Host -NoNewline "Current User Signed In : " -ForegroundColor Magenta
+        Write-Host "$UserSignIn" -ForegroundColor White
+        Write-Host "`n------------------------------`n" -ForegroundColor Cyan
+    
+        # Demander la confirmation de l'utilisateur
+        $response = Read-Host "You are connected on: $($OrgName). Do you want to continue? (Y/N)"
+    } while ($YesAnswers -notcontains $response)
+    
+
 #endregion Connexion
 #----------------------------------------------------------[Execution]----------------------------------------------------------
 #region Excecution
@@ -884,6 +934,9 @@ $host.UI.RawUI.BufferSize = New-Object Management.Automation.Host.Size(500, 3000
     $ResultsCA | Export-Excel -Path 'C:\TenantTool\Check\CAManagementResult.xlsx' -AutoSize -WorksheetName "CAResult" -TableName "CAResult" -BoldTopRow -FreezeTopRow -AutoFilter -AutoSize -ShowFilterButton -Title "Conditional Access Result" -TitleBold -TitleSize 16 -TitleColor DarkBlue -HeaderColor DarkBlue -HeaderSize 12 -HeaderBold -HeaderTextColor White -TableStyle Medium9
     #endregion Result
 
+    if ($Debug -eq "Yes") {
+        stop-transcript
+        }
 
     #region Disconnect 
         try {

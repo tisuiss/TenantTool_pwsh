@@ -97,7 +97,7 @@ try {
     Write-Host "Error: $_"
 }
 
-Get-MgContext
+#Get-MgContext
 #----------------------------------------------------------[Automated Variables]------------------------------------------------
 $OrgName = (Get-MgOrganization).DisplayName
 
